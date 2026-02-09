@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Attendance Dashboard</title>
+</head>
+<body>
+
+<h2>Welcome, {{ request.user.username }}</h2>
+
+{% if messages %}
+  {% for message in messages %}
+    <p style="color: green;">{{ message }}</p>
+  {% endfor %}
+{% endif %}
+
+<hr>
+
+{% if attendance %}
+    <p><strong>Date:</strong> {{ attendance.date }}</p>
+    <p><strong>Time In:</strong> {{ attendance.time_in|default:"Not yet" }}</p>
+    <p><strong>Time Out:</strong> {{ attendance.time_out|default:"Not yet" }}</p>
+    <p><strong>Total Hours:</strong> {{ attendance.total_hours|default:"N/A" }}</p>
+
+    {% if not attendance.time_out %}
+        <form method="post" action="{% url 'attendance:time_out' %}">
+            {% csrf_token %}
+            <button type="submit">Time Out</button>
+        </form>
+    {% endif %}
+{% else %}
+    <p>You have not timed in today.</p>
+    <form method="post" action="{% url 'attendance:time_in' %}">
+        {% csrf_token %}
+        <button type="submit">Time In</button>
+    </form>
+{% endif %}
+
+<hr>
+
+<a href="{% url 'logout' %}">Logout</a>
+
+</body>
+</html>
